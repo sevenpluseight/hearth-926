@@ -1,0 +1,21 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Keep source-generated output if needed
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# Gradle / Build
+build/
+.gradle/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Temporary / log files
+*.log
+*.tmp
+*.swp
