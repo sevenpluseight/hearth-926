@@ -11,7 +11,7 @@ public class GameScene {
 
     public GameScene(double width, double height) {
         Pane root = new Pane();
-        Grid grid = new Grid(20, 20, width, height, 40, 17);
+        Grid grid = new Grid(10, 10, width, height, 48, 24);
         player = new Player(0, 0, grid);
 
         root.getChildren().addAll(grid.getTilesAsNodes());
