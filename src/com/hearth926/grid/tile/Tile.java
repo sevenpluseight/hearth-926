@@ -40,7 +40,4 @@ public class Tile {
     public Node getNode() {
         return polygon;
     }
-
-    public int getRow() { return row; }
-    public int getCol() { return col; }
 }
