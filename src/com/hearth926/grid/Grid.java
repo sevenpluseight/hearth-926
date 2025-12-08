@@ -1,8 +1,9 @@
 package com.hearth926.grid;
 
-import com.hearth926.grid.tile.Tile;
+import com.hearth926.grid.tile.Tile3D;
 import com.hearth926.grid.tile.enums.TileType;
 import javafx.scene.Node;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,16 +16,17 @@ public class Grid {
     private final double sceneHeight;
     private final double xOffset;
     private final double yOffset;
-    private final List<Tile> tiles = new ArrayList<>();
 
-    public Grid(int rows, int cols, double sceneWidth, double sceneHeight, double tileWidth, double tileHeight) {
+    private final List<Tile3D> tiles = new ArrayList<>();
+
+    public Grid(int rows, int cols, double sceneWidth, double sceneHeight,
+                double tileWidth, double tileHeight) {
         this.rows = rows;
         this.cols = cols;
         this.sceneWidth = sceneWidth;
         this.sceneHeight = sceneHeight;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
-
         this.xOffset = sceneWidth / 2;
         this.yOffset = sceneHeight / 2 - (rows + cols) * tileHeight / 4;
 
@@ -37,8 +39,18 @@ public class Grid {
                 double x = (col - row) * tileWidth / 2 + xOffset;
                 double y = (col + row) * tileHeight / 2 + yOffset;
 
-                // TESTING: GRASS
-                Tile tile = new Tile(row, col, x, y, tileWidth, tileHeight, TileType.GRASS);
+                TileType type = TileType.GRASS;
+
+                double tileDepth = 25;
+                Tile3D tile = new Tile3D(
+                        x,
+                        y,
+                        tileWidth,
+                        tileHeight,
+                        type,
+                        tileDepth
+                );
+
                 tiles.add(tile);
             }
         }
@@ -46,10 +58,13 @@ public class Grid {
 
     public List<Node> getTilesAsNodes() {
         List<Node> nodes = new ArrayList<>();
-        for (Tile t : tiles) nodes.add(t.getNode());
+        for (Tile3D t : tiles) {
+            nodes.add(t.getNode());
+        }
         return nodes;
     }
 
+    // Getters
     public double getTileWidth() { return tileWidth; }
     public double getTileHeight() { return tileHeight; }
     public int getRows() { return rows; }
