@@ -1,6 +1,5 @@
 package com.hearth926.grid.tile;
 
-import com.hearth926.grid.tile.enums.TileType;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
