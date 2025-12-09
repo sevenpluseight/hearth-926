@@ -2,6 +2,7 @@ package com.hearth926.game;
 
 import com.hearth926.grid.Grid;
 import com.hearth926.player.Player;
+import com.hearth926.player.enums.Direction;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
@@ -25,10 +26,10 @@ public class GameScene {
     private void setupInput() {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case W, UP -> player.moveUp();
-                case A, LEFT -> player.moveLeft();
-                case S, DOWN -> player.moveDown();
-                case D, RIGHT -> player.moveRight();
+                case W, UP -> player.move(Direction.UP);
+                case A, LEFT -> player.move(Direction.LEFT);
+                case S, DOWN -> player.move(Direction.DOWN);
+                case D, RIGHT -> player.move(Direction.RIGHT);
             }
         });
     }
