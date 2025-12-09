@@ -1,4 +1,4 @@
-package com.hearth926.grid.tile.enums;
+package com.hearth926.grid.tile;
 
 import javafx.scene.paint.Color;
 import javafx.scene.image.Image;

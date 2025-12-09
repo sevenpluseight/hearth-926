@@ -1,7 +1,7 @@
 package com.hearth926.grid;
 
 import com.hearth926.grid.tile.Tile3D;
-import com.hearth926.grid.tile.enums.TileType;
+import com.hearth926.grid.tile.TileType;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
