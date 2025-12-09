@@ -19,3 +19,6 @@ Thumbs.db
 *.log
 *.tmp
 *.swp
+
+# ignore PROJECT_LOG.md only
+PROJECT_LOG.md
