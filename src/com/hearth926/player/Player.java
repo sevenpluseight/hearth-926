@@ -15,7 +15,7 @@ public class Player {
     private final Rectangle node;
     private final Grid grid;
     private static final double SIZE = 15;
-    private static final Duration MOVE_TIME = Duration.millis(180);
+    private static final Duration MOVE_TIME = Duration.millis(135);
 
     public Player(int row, int col, Grid grid) {
         this.row = row;
@@ -99,6 +99,23 @@ public class Player {
             case DOWN -> targetRow++;
             case LEFT -> targetCol--;
             case RIGHT -> targetCol++;
+
+            case UP_LEFT -> {
+                targetRow--;
+                targetCol--;
+            }
+            case UP_RIGHT -> {
+                targetRow--;
+                targetCol++;
+            }
+            case DOWN_LEFT -> {
+                targetRow++;
+                targetCol--;
+            }
+            case DOWN_RIGHT -> {
+                targetRow++;
+                targetCol++;
+            }
         }
 
         if (!isValid(targetRow, targetCol)) return;
