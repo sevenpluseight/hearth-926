@@ -1,5 +1,6 @@
 package com.hearth926.interaction;
 
+import com.hearth926.control.InteractionFocusController;
 import com.hearth926.player.Player;
 import javafx.animation.AnimationTimer;
 
