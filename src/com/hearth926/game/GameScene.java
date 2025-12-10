@@ -1,5 +1,6 @@
 package com.hearth926.game;
 
+import com.hearth926.control.CameraController;
 import com.hearth926.worldLayer.Grid;
 import com.hearth926.interaction.InteractionManager;
 import com.hearth926.npc.TestNPC;
@@ -25,10 +26,13 @@ public class GameScene {
         TestNPC npc = new TestNPC(4, 5, grid, "test_npc_dialogue", 20);
 
         Pane root = new Pane();
+        Pane world = new Pane();
 
-        root.getChildren().addAll(grid.getTilesAsNodes());
-        root.getChildren().add(player.getNode());
-        root.getChildren().add(npc.getNode());
+        root.getChildren().add(world);
+
+        world.getChildren().addAll(grid.getTilesAsNodes());
+        world.getChildren().add(player.getNode());
+        world.getChildren().add(npc.getNode());
 
         scene = new Scene(root, width, height);
 
@@ -37,6 +41,19 @@ public class GameScene {
         interactionManager.startAutoFocus();
 
         setupInput(interactionManager);
+
+        // Camera
+        CameraController camera = new CameraController(world, player.getNode(), width, height);
+
+        camera.setSmoothing(0.15);
+
+        javafx.animation.AnimationTimer cameraLoop = new javafx.animation.AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                camera.update();
+            }
+        };
+        cameraLoop.start();
     }
 
     private void setupInput(InteractionManager interactionManager) {
