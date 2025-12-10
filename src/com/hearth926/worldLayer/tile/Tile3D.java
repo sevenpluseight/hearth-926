@@ -1,4 +1,4 @@
-package com.hearth926.grid.tile;
+package com.hearth926.worldLayer.tile;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -8,14 +8,19 @@ import javafx.scene.shape.Polygon;
 
 public class Tile3D {
     private final Group block;
-    private final Polygon top;
-    private final Polygon left;
-    private final Polygon right;
+    private final Polygon top, left, right;
+    private final int row, col;
     private TileType type;
 
-    public Tile3D(double x, double y, double tileWidth, double tileHeight, TileType type, double height) {
+    public Tile3D(int row, int col, double tileWidth, double tileHeight, double height, TileType type) {
+        this.row = row;
+        this.col = col;
         this.type = type;
+
         block = new Group();
+
+        double x = (col - row) * tileWidth / 2;
+        double y = (col + row) * tileHeight / 2;
 
         // Top face
         top = new Polygon(
@@ -53,13 +58,13 @@ public class Tile3D {
             top.setFill(type.getColor());
         }
 
-        left.setFill(getSideColor(type, 0.7));
-        right.setFill(getSideColor(type, 0.5));
+        left.setFill(type.getColor().deriveColor(0, 1, 0.7, 1));
+        right.setFill(type.getColor().deriveColor(0, 1, 0.5, 1));
     }
 
-    private Color getSideColor(TileType type, double factor) {
-        return type.getColor().deriveColor(0, 1, factor, 1);
-    }
+//    private Color getSideColor(TileType type, double factor) {
+//        return type.getColor().deriveColor(0, 1, factor, 1);
+//    }
 
     public Node getNode() {
         return block;
@@ -69,4 +74,8 @@ public class Tile3D {
         this.type = type;
         applyType(type);
     }
+
+    // Tile coordination for logic
+    public int getRow() { return row; }
+    public int getCol() { return col; }
 }
