@@ -1,5 +1,6 @@
 package com.hearth926.worldLayer;
 
+import com.hearth926.npc.BaseNPC;
 import com.hearth926.worldLayer.tile.Tile3D;
 import com.hearth926.worldLayer.tile.TileType;
 import javafx.scene.Node;
@@ -20,6 +21,7 @@ public class Grid {
     private final double yOffset;
 
     private final List<Tile3D> tiles = new ArrayList<>();
+    private final List<BaseNPC> npcs = new ArrayList<>();
 
     public Grid(int rows, int cols, double sceneWidth, double sceneHeight,
                 double tileWidth, double tileHeight, double tileDepth) {
@@ -36,6 +38,18 @@ public class Grid {
         this.yOffset = sceneHeight / 2 - (rows + cols) * tileHeight / 4;
 
         createGrid();
+    }
+
+    public void registerNPC(BaseNPC npc) {
+        npcs.add(npc);
+    }
+
+    public boolean isTileOccupied(int row, int col) {
+        if (row < 0 || col < 0 || row >= rows || col >= cols) return true;
+        for (BaseNPC npc : npcs) {
+            if (npc.getRow() == row && npc.getCol() == col) return true;
+        }
+        return false;
     }
 
     private void createGrid() {
