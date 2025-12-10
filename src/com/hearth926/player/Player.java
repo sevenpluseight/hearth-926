@@ -95,7 +95,13 @@ public class Player {
     }
 
     private boolean isValid(int row, int col) {
-        return row >= 0 && col >= 0 && row < grid.getRows() && col < grid.getCols();
+//        return row >= 0 && col >= 0 && row < grid.getRows() && col < grid.getCols();
+
+        // Map bounds check
+        if (row < 0 || col < 0 || row >= grid.getRows() || col >= grid.getCols()) return false;
+
+        // Check for NPC collision
+        return !grid.isTileOccupied(row, col);
     }
 
     public Rectangle getNode() {
