@@ -1,5 +1,6 @@
-package com.hearth926.interaction;
+package com.hearth926.control;
 
+import com.hearth926.interaction.Interactable;
 import com.hearth926.player.Player;
 import javafx.animation.AnimationTimer;
 import javafx.scene.effect.DropShadow;
