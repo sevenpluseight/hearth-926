@@ -110,6 +110,10 @@ public class Player {
         return node.getTranslateY() + SIZE / 2;
     }
 
+    public boolean isMoving() {
+        return moving;
+    }
+
     // Optional: get tile coordinates
     public int getRow() { return row; }
     public int getCol() { return col; }
