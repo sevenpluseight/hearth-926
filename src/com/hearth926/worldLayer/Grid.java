@@ -1,7 +1,8 @@
-package com.hearth926.grid;
+package com.hearth926.worldLayer;
 
-import com.hearth926.grid.tile.Tile3D;
-import com.hearth926.grid.tile.TileType;
+import com.hearth926.npc.BaseNPC;
+import com.hearth926.worldLayer.tile.Tile3D;
+import com.hearth926.worldLayer.tile.TileType;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
@@ -14,42 +15,60 @@ public class Grid {
     private final double tileHeight;
     private final double sceneWidth;
     private final double sceneHeight;
+    private final double tileDepth;
+
     private final double xOffset;
     private final double yOffset;
 
     private final List<Tile3D> tiles = new ArrayList<>();
+    private final List<BaseNPC> npcs = new ArrayList<>();
 
     public Grid(int rows, int cols, double sceneWidth, double sceneHeight,
-                double tileWidth, double tileHeight) {
+                double tileWidth, double tileHeight, double tileDepth) {
         this.rows = rows;
         this.cols = cols;
         this.sceneWidth = sceneWidth;
         this.sceneHeight = sceneHeight;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
+        this.tileDepth = tileDepth;
+
+        // Center the grid in the scene
         this.xOffset = sceneWidth / 2;
         this.yOffset = sceneHeight / 2 - (rows + cols) * tileHeight / 4;
 
         createGrid();
     }
 
+    public void registerNPC(BaseNPC npc) {
+        npcs.add(npc);
+    }
+
+    public boolean isTileOccupied(int row, int col) {
+        if (row < 0 || col < 0 || row >= rows || col >= cols) return true;
+        for (BaseNPC npc : npcs) {
+            if (npc.getRow() == row && npc.getCol() == col) return true;
+        }
+        return false;
+    }
+
     private void createGrid() {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                double x = (col - row) * tileWidth / 2 + xOffset;
-                double y = (col + row) * tileHeight / 2 + yOffset;
+                TileType type = TileType.GRASS; // default tile
 
-                TileType type = TileType.GRASS;
-
-                double tileDepth = 25;
                 Tile3D tile = new Tile3D(
-                        x,
-                        y,
+                        row,
+                        col,
                         tileWidth,
                         tileHeight,
-                        type,
-                        tileDepth
+                        tileDepth,
+                        type
                 );
+
+                // Apply offsets
+                tile.getNode().setTranslateX(tile.getNode().getTranslateX() + xOffset);
+                tile.getNode().setTranslateY(tile.getNode().getTranslateY() + yOffset);
 
                 tiles.add(tile);
             }
@@ -58,8 +77,8 @@ public class Grid {
 
     public List<Node> getTilesAsNodes() {
         List<Node> nodes = new ArrayList<>();
-        for (Tile3D t : tiles) {
-            nodes.add(t.getNode());
+        for (Tile3D tile : tiles) {
+            nodes.add(tile.getNode());
         }
         return nodes;
     }
@@ -71,4 +90,7 @@ public class Grid {
     public int getCols() { return cols; }
     public double getSceneWidth() { return sceneWidth; }
     public double getSceneHeight() { return sceneHeight; }
+    public double getTileDepth() { return tileDepth; }
+    public double getXOffset() { return xOffset; }
+    public double getYOffset() { return yOffset; }
 }

@@ -1,4 +1,4 @@
-package com.hearth926.grid.tile;
+package com.hearth926.worldLayer.tile;
 
 import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
@@ -6,9 +6,9 @@ import javafx.scene.image.Image;
 import java.util.Objects;
 
 public enum TileType {
-    GRASS(Color.LIGHTGREEN, "/images/tiles/grass.png"),
-    DIRT(Color.SADDLEBROWN, "/images/tiles/dirt.png"),
-    WATER(Color.DEEPSKYBLUE, "/images/tiles/water.png");
+    GRASS(Color.LIGHTGREEN, "/images/tiles/grass.png");
+//    DIRT(Color.SADDLEBROWN, "/images/tiles/dirt.png"),
+//    WATER(Color.DEEPSKYBLUE, "/images/tiles/water.png");
 
     private final Color color;
     private final Image image;

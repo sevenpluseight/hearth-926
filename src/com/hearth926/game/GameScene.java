@@ -1,72 +1,58 @@
 package com.hearth926.game;
 
-import com.hearth926.grid.Grid;
+import com.hearth926.control.CameraController;
+import com.hearth926.control.InputManager;
+import com.hearth926.worldLayer.Grid;
+import com.hearth926.interaction.InteractionManager;
+import com.hearth926.npc.TestNPC;
 import com.hearth926.player.Player;
-import com.hearth926.player.enums.Direction;
+import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class GameScene {
     private final Scene scene;
     private final Player player;
 
-    private final Set<KeyCode> keysPressed = new HashSet<>();
-
     public GameScene(double width, double height) {
-        Pane root = new Pane();
-        Grid grid = new Grid(10, 10, width, height, 48, 24);
+        Grid grid = new Grid(10, 10, width, height, 48, 24, 25);
         player = new Player(0, 0, grid);
+        InteractionManager interactionManager = new InteractionManager(player);
 
-        root.getChildren().addAll(grid.getTilesAsNodes());
-        root.getChildren().add(player.getNode());
+        TestNPC npc = new TestNPC(4, 5, grid, "test_npc_dialogue", 20);
+        grid.registerNPC(npc);
+
+        Pane world = new Pane();
+        world.getChildren().addAll(grid.getTilesAsNodes());
+        world.getChildren().add(player.getNode());
+        world.getChildren().add(npc.getNode());
+
+        Pane root = new Pane(world);
 
         scene = new Scene(root, width, height);
 
-        setupInput();
-    }
+        // Register NPC for interaction
+        interactionManager.register(npc);
+        interactionManager.startAutoFocus();
 
-    private void setupInput() {
-        scene.setOnKeyPressed(event -> {
-            keysPressed.add(event.getCode());
-            handleMovement();
-        });
+        // Input manager handles movement and interaction
+        InputManager inputManager = new InputManager(player, interactionManager, scene);
 
-        scene.setOnKeyReleased(event -> {
-            keysPressed.remove(event.getCode());
-        });
-    }
+        // Camera setup
+        CameraController camera = new CameraController(world, player.getNode(), width, height);
+        camera.setSmoothing(0.10);
 
-    private void handleMovement() {
-        boolean up = keysPressed.contains(KeyCode.W) || keysPressed.contains(KeyCode.UP);
-        boolean down = keysPressed.contains(KeyCode.S) || keysPressed.contains(KeyCode.DOWN);
-        boolean left = keysPressed.contains(KeyCode.A) || keysPressed.contains(KeyCode.LEFT);
-        boolean right = keysPressed.contains(KeyCode.D) || keysPressed.contains(KeyCode.RIGHT);
+        // Main game loop
+        new javafx.animation.AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                inputManager.update();
+                camera.update();
+            }
+        }.start();
 
-        // Diagonals first (priority)
-        if (up && left) {
-            player.move(Direction.UP_LEFT);
-        } else if (up && right) {
-            player.move(Direction.UP_RIGHT);
-        } else if (down && left) {
-            player.move(Direction.DOWN_LEFT);
-        } else if (down && right) {
-            player.move(Direction.DOWN_RIGHT);
-        }
-
-        // Cardinals
-        else if (up) {
-            player.move(Direction.UP);
-        } else if (down) {
-            player.move(Direction.DOWN);
-        } else if (left) {
-            player.move(Direction.LEFT);
-        } else if (right) {
-            player.move(Direction.RIGHT);
-        }
+        root.setFocusTraversable(true);
+        Platform.runLater(root::requestFocus);
     }
 
     public Scene getScene() {
