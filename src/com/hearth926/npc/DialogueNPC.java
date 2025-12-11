@@ -17,41 +17,39 @@ public class DialogueNPC extends BaseNPC {
         preloadDialogue();
     }
 
+    // Preload dialogue from TextManager
     private void preloadDialogue() {
         if (dialogueKey != null) {
             dialogueLines = TextManager.getInstance().getTextList(dialogueKey);
         }
     }
 
-    // Returns the current dialogue line (or "..." if none)
-    public String getDialogue() {
-        if (dialogueLines == null || dialogueLines.isEmpty()) return "...";
-        if (dialogueIndex >= dialogueLines.size()) dialogueIndex = dialogueLines.size() - 1;
+    // Returns the current line
+    public String getCurrentLine() {
+        if (isDialogueFinished()) return "...";
         return dialogueLines.get(dialogueIndex);
     }
 
-    /**
-     * Advances the dialogue
-     * @return true if the dialogue has finished (after the last line)
-     */
-    public boolean advanceDialogue() {
-        if (dialogueLines == null || dialogueLines.isEmpty()) return true;
-
-        dialogueIndex++;
-        if (dialogueIndex >= dialogueLines.size()) {
-            dialogueIndex = 0;
-            return true;
+    // Advance to the next line, if any
+    public void advanceDialogue() {
+        if (dialogueLines != null && !isDialogueFinished()) {
+            dialogueIndex++;
         }
-        return false; // not finished
     }
 
+    // Returns true if the last line is currently displayed
+    public boolean isDialogueFinished() {
+        return dialogueLines == null || dialogueLines.isEmpty() || dialogueIndex >= dialogueLines.size();
+    }
+
+    // Reset dialogue for next interaction
     public void resetDialogue() {
         dialogueIndex = 0;
     }
 
     @Override
     protected void defaultInteract(Player player) {
-        System.out.println("Dialogue NPC says: " + getDialogue());
+        System.out.println("Dialogue NPC says: " + getCurrentLine());
         advanceDialogue();
     }
 }

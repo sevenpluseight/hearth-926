@@ -31,23 +31,41 @@ public class InteractionManager {
 
     // Called when player presses E or clicks an NPC
     public void interact() {
-        DialogueNPC closestNPC = getClosestDialogueNPCInRange();
-        if (closestNPC == null) return;
-
-        // Reset previous NPC if switching
-        if (activeDialogueNPC != null && activeDialogueNPC != closestNPC) {
-            activeDialogueNPC.resetDialogue();
+        if (isDialogueActive()) {
+            processInteraction(activeDialogueNPC);
+        } else {
+            DialogueNPC closestNPC = getClosestDialogueNPCInRange();
+            if (closestNPC != null) {
+                processInteraction(closestNPC);
+            }
         }
+    }
 
-        activeDialogueNPC = closestNPC;
+    private void processInteraction(DialogueNPC npc) {
+        if (activeDialogueNPC != npc) {
+            if (activeDialogueNPC != null) {
+                activeDialogueNPC.resetDialogue();
+            }
+            activeDialogueNPC = npc;
+            activeDialogueNPC.resetDialogue(); // Start from the beginning
 
-        // Show current line
-        showDialogue(activeDialogueNPC.getDialogue());
+            // Show the first line, but only if the NPC has dialogue
+            if (activeDialogueNPC.isDialogueFinished()) {
+                hideDialogue(); // Closes the box immediately
+                activeDialogueNPC = null;
+            } else {
+                showDialogue(activeDialogueNPC.getCurrentLine());
+            }
+        } else { // continuing with the same NPC
+            activeDialogueNPC.advanceDialogue();
 
-        // Advance dialogue; if finished, end conversation
-        if (activeDialogueNPC.advanceDialogue()) {
-            activeDialogueNPC = null;
-            hideDialogue();
+            if (activeDialogueNPC.isDialogueFinished()) {
+                hideDialogue();
+                activeDialogueNPC.resetDialogue();
+                activeDialogueNPC = null;
+            } else {
+                showDialogue(activeDialogueNPC.getCurrentLine());
+            }
         }
     }
 
@@ -62,29 +80,16 @@ public class InteractionManager {
         if (!obj.isClickable()) return;
 
         obj.getNode().setOnMouseClicked(e -> {
-            if (obj.isInRange(player)) {
+            if (!obj.isInRange(player)) return;
+            if (obj instanceof DialogueNPC dialogueNPC) {
+                processInteraction(dialogueNPC);
+            } else {
                 obj.interact(player);
-
-                if (obj instanceof DialogueNPC dialogueNPC) {
-                    // Reset previous NPC if switching
-                    if (activeDialogueNPC != null && activeDialogueNPC != dialogueNPC) {
-                        activeDialogueNPC.resetDialogue();
-                    }
-
-                    activeDialogueNPC = dialogueNPC;
-                    showDialogue(activeDialogueNPC.getDialogue());
-
-                    // Advance dialogue; if finished, end conversation
-                    if (activeDialogueNPC.advanceDialogue()) {
-                        activeDialogueNPC = null;
-                        hideDialogue();
-                    }
-                }
             }
         });
     }
 
-    // Returns the closest DialogueNPC in range or null
+    // Returns the closest DialogueNPC in range
     public DialogueNPC getClosestDialogueNPCInRange() {
         return interactables.stream()
                 .filter(obj -> obj instanceof DialogueNPC && obj.isInRange(player))
@@ -93,7 +98,7 @@ public class InteractionManager {
                 .orElse(null);
     }
 
-    // Returns the closest BaseNPC in range or null
+    // Returns the closest BaseNPC in range
     public BaseNPC getClosestNPCInRange() {
         return interactables.stream()
                 .filter(BaseNPC.class::isInstance)
@@ -113,8 +118,6 @@ public class InteractionManager {
             @Override
             public void handle(long now) {
                 focusController.updateFocus();
-
-                // Reset dialogue if player walks out of range
                 if (activeDialogueNPC != null && !activeDialogueNPC.isInRange(player)) {
                     activeDialogueNPC.resetDialogue();
                     activeDialogueNPC = null;
@@ -131,10 +134,8 @@ public class InteractionManager {
 
     public void hideDialogue() {
         dialogueBox.hideDialogue();
-        activeDialogueNPC = null;
     }
 
-    // Returns true if the player is currently in dialogue
     public boolean isDialogueActive() {
         return activeDialogueNPC != null;
     }
