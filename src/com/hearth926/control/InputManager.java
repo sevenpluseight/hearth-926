@@ -43,6 +43,9 @@ public class InputManager {
 
     // Call every frame from AnimationTimer
     public void update() {
+        // Block movement if player is in dialogue
+        if (interactionManager.isDialogueActive()) return;
+
         if (player.isMoving()) return;
 
         Direction nextMove = getNextDirection();
