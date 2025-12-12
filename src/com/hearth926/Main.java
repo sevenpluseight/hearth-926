@@ -19,7 +19,7 @@ public class Main extends Application {
             stage.setScene(gameScene.getScene());
         });
 
-        stage.setTitle("Hearth:926");
+        stage.setTitle("Hearth: 926");
 //        stage.setScene(gameScene.getScene());
         stage.setX(screen.getMinX());
         stage.setY(screen.getMinY());
