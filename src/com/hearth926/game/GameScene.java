@@ -32,12 +32,17 @@ public class GameScene {
         scene = new Scene(root, width, height);
 
         // Test NPC
-        TestNPC npc = new TestNPC(4, 5, grid, "test_npc_dialogue", 20);
-        grid.registerNPC(npc);
-        world.getChildren().add(npc.getNode());
+        TestNPC npc1 = new TestNPC(4, 5, grid, "test_npc_dialogue_1", 20);
+        grid.registerNPC(npc1);
+        world.getChildren().add(npc1.getNode());
+
+        TestNPC npc2 = new TestNPC(7, 8, grid, "test_npc_dialogue_2", 20);
+        grid.registerNPC(npc2);
+        world.getChildren().add(npc2.getNode());
 
         InteractionManager interactionManager = new InteractionManager(player, uiLayer);
-        interactionManager.register(npc);
+        interactionManager.register(npc1);
+        interactionManager.register(npc2);
 
         // Input
         InputManager inputManager = new InputManager(player, interactionManager, scene);

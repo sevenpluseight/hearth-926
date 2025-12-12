@@ -3,8 +3,12 @@
   "continue": "Continue Game",
   "languages": "Languages",
   "title": "Hearth: 926",
-  "test_npc_dialogue": [
-    "Hello!",
+  "test_npc_dialogue_1": [
+    "Hello! I'm the first Test NPC.",
     "Can you help me find my lost item?"
+  ],
+  "test_npc_dialogue_2": [
+    "Hello there! I'm the second Test NPC.",
+    "My name is Ah Yi."
   ]
 }
