@@ -4,84 +4,89 @@ import com.hearth926.npc.DialogueNPC;
 import com.hearth926.ui.DialogueBox;
 
 public class DialogueHandler {
-    private DialogueNPC active = null;
-    private final DialogueBox box;
+    private DialogueNPC activeNPC = null;
+    private final DialogueBox dialogueBox;
 
     public DialogueHandler(DialogueBox box) {
-        this.box = box;
+        this.dialogueBox = box;
     }
 
-    // True if the UI box is visible (dialogue currently shown)
+    // Returns true if the dialogue box is currently visible
     public boolean isDialogueVisible() {
-        return box.isShowing();
+        return dialogueBox.isShowing();
     }
 
-    // True if currently have an active NPC (conversation in progress)
+    // Returns true if a conversation with an NPC is active
     public boolean isActive() {
-        return active != null;
+        return activeNPC != null;
     }
 
+    // Returns the current active NPC
     public DialogueNPC getActiveNPC() {
-        return active;
+        return activeNPC;
     }
 
-    // Start a dialogue with npc OR continue the same npc
+    /**
+     * Start a dialogue with the given NPC or continue the active one if the same
+     * If switching to a new NPC, ends the previous conversation first
+     */
     public void startOrContinue(DialogueNPC npc) {
-        if (active != null && active != npc) {
-            // switching NPCs: reset old conversation
-            endDialogue();
+        if (activeNPC != null && activeNPC != npc) {
+            endDialogue(); // reset previous conversation
         }
         if (!isActive()) startDialogue(npc);
         else continueDialogue();
     }
 
-    // Begin a new dialogue from the first line
+    // Start a new dialogue from the first line of the given NPC
     public void startDialogue(DialogueNPC npc) {
-        if (active != null && active != npc) endDialogue();
+        if (activeNPC != null && activeNPC != npc) endDialogue();
 
-        active = npc;
-        active.resetDialogue();
+        activeNPC = npc;
+        activeNPC.resetDialogue();
 
-        if (active.isDialogueFinished()) {
-            // nothing meaningful to show
+        if (activeNPC.isDialogueFinished()) {
             endDialogue();
             return;
         }
 
-        show(active.getCurrentLine());
+        showLine(activeNPC.getCurrentLine());
     }
 
-    // Called when player presses E while a conversation is active
+    // Continue the dialogue with the active NPC (called on pressing E)
     public void continueDialogue() {
-        if (active == null) return;
+        if (activeNPC == null) return;
 
-        active.advanceDialogue();
+        activeNPC.advanceDialogue();
 
-        if (active.isDialogueFinished()) {
-            // conversation ended — hide UI and clear active
+        if (activeNPC.isDialogueFinished()) {
             endDialogue();
             return;
         }
 
-        show(active.getCurrentLine());
+        showLine(activeNPC.getCurrentLine());
     }
 
-    // Forcefully end and clear the current dialogue
+    // Ends the current dialogue and hides the UI
     public void endDialogue() {
-        if (active != null) active.resetDialogue();
-        active = null;
-        box.hideDialogue();
+        if (activeNPC != null) activeNPC.resetDialogue();
+        activeNPC = null;
+        dialogueBox.hideDialogue();
     }
 
-    // Called by InteractionManager each frame to force-end if player left range
+    /**
+     * Forcefully end dialogue if the player is out of range
+     * @param isInRange true if the player is still in the interaction range
+     */
     public void forceEndIfOutOfRange(boolean isInRange) {
-        if (!isInRange && active != null) {
+        if (!isInRange && activeNPC != null) {
             endDialogue();
         }
     }
 
-    private void show(String text) {
+    // Helper to show a line on the dialogue box
+    private void showLine(String text) {
         if (text == null || text.isEmpty()) text = "...";
-        box.showDialogue(text, 30);
+        dialogueBox.showDialogue(text, 30);
     }
 }

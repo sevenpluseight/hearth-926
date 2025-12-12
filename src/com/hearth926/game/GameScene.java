@@ -2,20 +2,23 @@ package com.hearth926.game;
 
 import com.hearth926.control.CameraController;
 import com.hearth926.control.InputManager;
-import com.hearth926.npc.TestNPC;
-import com.hearth926.worldLayer.Grid;
 import com.hearth926.interaction.InteractionManager;
+import com.hearth926.npc.TestNPC;
 import com.hearth926.player.Player;
+import com.hearth926.worldLayer.Grid;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+
+import java.util.List;
 
 public class GameScene {
     private final Scene scene;
     private final Player player;
 
     public GameScene(double width, double height) {
+        // World grid
         Grid grid = new Grid(10, 10, width, height, 48, 24, 25);
         player = new Player(0, 0, grid);
 
@@ -31,20 +34,18 @@ public class GameScene {
         Pane root = new Pane(world, uiLayer);
         scene = new Scene(root, width, height);
 
-        // Test NPC
-        TestNPC npc1 = new TestNPC(4, 5, grid, "test_npc_dialogue_1", 20);
-        grid.registerNPC(npc1);
-        world.getChildren().add(npc1.getNode());
-
-        TestNPC npc2 = new TestNPC(7, 8, grid, "test_npc_dialogue_2", 20);
-        grid.registerNPC(npc2);
-        world.getChildren().add(npc2.getNode());
-
         InteractionManager interactionManager = new InteractionManager(player, uiLayer);
-        interactionManager.register(npc1);
-        interactionManager.register(npc2);
 
-        // Input
+        TestNPC npc1 = new TestNPC(4, 5, grid, "test_npc_1", List.of("greeting1", "greeting2"), 20);
+        TestNPC npc2 = new TestNPC(7, 8, grid, "test_npc_2", List.of("greeting1", "greeting2"), 20);
+
+        // Register NPCs in grid and interaction manager
+        for (TestNPC npc : List.of(npc1, npc2)) {
+            grid.registerNPC(npc);
+            world.getChildren().add(npc.getNode());
+            interactionManager.register(npc);
+        }
+
         InputManager inputManager = new InputManager(player, interactionManager, scene);
 
         // Camera

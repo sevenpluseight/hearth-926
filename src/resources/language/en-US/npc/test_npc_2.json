@@ -1,0 +1,14 @@
+{
+  "npc_id": "test_npc_2",
+  "name": "Ah Yi",
+  "dialogues": [
+    {
+      "id": "greeting1",
+      "text": "Hello there!"
+    },
+    {
+      "id": "greeting2",
+      "text": "My name is Ah Yi."
+    }
+  ]
+}

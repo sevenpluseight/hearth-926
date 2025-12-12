@@ -1,0 +1,14 @@
+{
+  "npc_id": "test_npc_1",
+  "name": "马斯汀",
+  "dialogues": [
+    {
+      "id": "greeting1",
+      "text": "你好！我是马斯汀。"
+    },
+    {
+      "id": "greeting2",
+      "text": "你能帮我找到丢失的物品吗？"
+    }
+  ]
+}
