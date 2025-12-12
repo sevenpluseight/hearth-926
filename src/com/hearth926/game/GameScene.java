@@ -2,22 +2,23 @@ package com.hearth926.game;
 
 import com.hearth926.control.CameraController;
 import com.hearth926.control.InputManager;
-import com.hearth926.npc.DialogueNPC;
-import com.hearth926.worldLayer.Grid;
 import com.hearth926.interaction.InteractionManager;
-import com.hearth926.npc.BaseNPC;
 import com.hearth926.npc.TestNPC;
 import com.hearth926.player.Player;
+import com.hearth926.worldLayer.Grid;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+
+import java.util.List;
 
 public class GameScene {
     private final Scene scene;
     private final Player player;
 
     public GameScene(double width, double height) {
+        // World grid
         Grid grid = new Grid(10, 10, width, height, 48, 24, 25);
         player = new Player(0, 0, grid);
 
@@ -26,53 +27,40 @@ public class GameScene {
         world.getChildren().addAll(grid.getTilesAsNodes());
         world.getChildren().add(player.getNode());
 
-        // UI layer for dialogues
+        // UI layer
         Pane uiLayer = new Pane();
 
-        // Root pane contains both world and UI
+        // Root layer
         Pane root = new Pane(world, uiLayer);
         scene = new Scene(root, width, height);
 
-        // Setup test NPC
-        TestNPC npc = new TestNPC(4, 5, grid, "test_npc_dialogue", 20);
-        grid.registerNPC(npc);
-        world.getChildren().add(npc.getNode());
-
-        // Interaction manager handles player interactions
         InteractionManager interactionManager = new InteractionManager(player, uiLayer);
-        interactionManager.register(npc);
-        interactionManager.startAutoFocus();
 
-        // Input manager handles movement + interactions
+        TestNPC npc1 = new TestNPC(4, 5, grid, "test_npc_1", List.of("greeting1", "greeting2"), 20);
+        TestNPC npc2 = new TestNPC(7, 8, grid, "test_npc_2", List.of("greeting1", "greeting2"), 20);
+
+        // Register NPCs in grid and interaction manager
+        for (TestNPC npc : List.of(npc1, npc2)) {
+            grid.registerNPC(npc);
+            world.getChildren().add(npc.getNode());
+            interactionManager.register(npc);
+        }
+
         InputManager inputManager = new InputManager(player, interactionManager, scene);
 
-        // Camera setup
+        // Camera
         CameraController camera = new CameraController(world, player.getNode(), width, height);
         camera.setSmoothing(0.10);
 
-        // Track the last NPC in range to reset dialogue when the player moves away
-        BaseNPC[] lastNPC = {null};
-
-        // Main game loop
         new AnimationTimer() {
             @Override
             public void handle(long now) {
                 inputManager.update();
                 camera.update();
-
-                // Check if player moved away from active NPC
-                BaseNPC closestNPC = interactionManager.getClosestNPCInRange();
-                if (lastNPC[0] != null && lastNPC[0] != closestNPC) {
-                    // Player left the previous NPC
-                    if (lastNPC[0] instanceof DialogueNPC dialogueNPC) {
-                        dialogueNPC.resetDialogue();
-                    }
-                    interactionManager.hideDialogue();
-                }
-                lastNPC[0] = closestNPC;
             }
         }.start();
 
+        // Focus handling
         root.setFocusTraversable(true);
         Platform.runLater(root::requestFocus);
     }

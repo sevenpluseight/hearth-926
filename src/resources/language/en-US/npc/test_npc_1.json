@@ -1,0 +1,14 @@
+{
+  "npc_id": "test_npc_1",
+  "name": "Martin",
+  "dialogues": [
+    {
+      "id": "greeting1",
+      "text": "Hello! I'm Martin."
+    },
+    {
+      "id": "greeting2",
+      "text": "Can you help me find my lost item?"
+    }
+  ]
+}

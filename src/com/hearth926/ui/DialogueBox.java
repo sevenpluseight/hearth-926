@@ -15,13 +15,11 @@ public class DialogueBox extends StackPane {
     private Timeline typewriterTimeline;
 
     public DialogueBox(double width, double height) {
-        // Background
         Rectangle bg = new Rectangle(width, height);
         bg.setFill(Color.WHITE);
         bg.setArcWidth(10);
         bg.setArcHeight(10);
 
-        // Dialogue text
         dialogueLabel = new Label();
         dialogueLabel.setTextFill(Color.BLACK);
         dialogueLabel.setWrapText(true);
@@ -29,41 +27,38 @@ public class DialogueBox extends StackPane {
 
         VBox container = new VBox(dialogueLabel);
         container.setAlignment(Pos.CENTER);
-        container.setSpacing(10);
 
-        this.getChildren().addAll(bg, container);
-        this.setVisible(false); // initially hidden
+        getChildren().addAll(bg, container);
+        setVisible(false);
     }
 
-    /**
-     * Shows the dialogue using typewriter effect
-     * @param text the dialogue text
-     * @param speedMillis milliseconds per character
-     */
     public void showDialogue(String text, int speedMillis) {
-        this.setVisible(true);
+        setVisible(true);
 
-        // Stop previous animation if any
-        if (typewriterTimeline != null) {
-            typewriterTimeline.stop();
-        }
+        if (typewriterTimeline != null) typewriterTimeline.stop();
 
         dialogueLabel.setText("");
-        final String fullText = text;
+        final String full = text;
 
         typewriterTimeline = new Timeline();
-        for (int i = 0; i < fullText.length(); i++) {
-            final int index = i;
-            KeyFrame keyFrame = new KeyFrame(Duration.millis(speedMillis * i), e -> {
-                dialogueLabel.setText(fullText.substring(0, index + 1));
-            });
-            typewriterTimeline.getKeyFrames().add(keyFrame);
+        for (int i = 0; i < full.length(); i++) {
+            final int idx = i;
+            typewriterTimeline.getKeyFrames().add(
+                    new KeyFrame(Duration.millis(speedMillis * i),
+                            e -> dialogueLabel.setText(full.substring(0, idx + 1)))
+            );
         }
         typewriterTimeline.play();
     }
 
     public void hideDialogue() {
         if (typewriterTimeline != null) typewriterTimeline.stop();
-        this.setVisible(false);
+        setVisible(false);
+    }
+
+    // Used to block movement
+    public boolean isShowing() {
+        return isVisible();
     }
 }
+

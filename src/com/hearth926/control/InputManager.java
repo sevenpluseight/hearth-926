@@ -20,7 +20,6 @@ public class InputManager {
         this.interactionManager = interactionManager;
 
         registerInput(scene);
-
         Platform.runLater(() -> scene.getRoot().requestFocus());
     }
 
