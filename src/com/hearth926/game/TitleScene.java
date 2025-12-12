@@ -26,7 +26,7 @@ public class TitleScene {
         root.setStyle("-fx-alignment: center; -fx-background-color: linear-gradient(to bottom, #87CEEB, #1E90FF);");
 
         // Game title
-        Text title = new Text("Hearth:926");
+        Text title = new Text(textManager.getText("title"));
         title.setFont(Font.font(64));
         title.setStyle("-fx-fill: gold; -fx-stroke: black; -fx-stroke-width: 2;");
 
